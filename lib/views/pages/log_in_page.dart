@@ -1,3 +1,6 @@
+import 'package:elepro/utils/session_helper.dart';
+import 'package:elepro/utils/style_helper.dart';
+import 'package:elepro/views/pages/navigation_page.dart';
 import 'package:elepro/views/pages/sign_up_page.dart';
 import 'package:flutter/material.dart';
 
@@ -12,8 +15,19 @@ class _LoginPageState extends State<LoginPage> {
   final controllerEmailAddress = TextEditingController();
   final controllerPassword = TextEditingController();
   final formKey = GlobalKey<FormState>();
+  bool _passwordVisible = false;
 
-  login() {}
+  login() {
+    // Eksekusi request Log in
+    Map dataUser = {
+      'email': 'elepro@email.com',
+    };
+    Session.saveUser(dataUser);
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => Navigation()),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -34,8 +48,8 @@ class _LoginPageState extends State<LoginPage> {
                     height: 64,
                   ),
                   form(),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
+                  Wrap(
+                    spacing: 4,
                     children: [
                       Text('Belum punya akun?'),
                       TextButton(
@@ -52,7 +66,7 @@ class _LoginPageState extends State<LoginPage> {
                           style: Theme.of(context)
                               .textTheme
                               .bodyMedium!
-                              .copyWith(color: Colors.blue),
+                              .copyWith(color: Style.blue),
                         ),
                       ),
                     ],
@@ -86,7 +100,7 @@ class _LoginPageState extends State<LoginPage> {
                     border: const OutlineInputBorder(),
                     prefixIcon: Icon(
                       Icons.mail_outline,
-                      color: Colors.grey,
+                      color: Style.grey,
                     ),
                     hintText: 'johndoe@email.com',
                     labelText: 'Alamat Surel',
@@ -95,7 +109,7 @@ class _LoginPageState extends State<LoginPage> {
                 const SizedBox(height: 16),
                 TextFormField(
                   controller: controllerPassword,
-                  obscureText: true,
+                  obscureText: _passwordVisible,
                   validator: (value) =>
                       value == '' ? "Silakan isi kata sandi" : null,
                   autovalidateMode: AutovalidateMode.onUserInteraction,
@@ -103,17 +117,44 @@ class _LoginPageState extends State<LoginPage> {
                     border: const OutlineInputBorder(),
                     prefixIcon: Icon(
                       Icons.lock_outline,
-                      color: Colors.grey,
+                      color: Style.grey,
                     ),
                     suffixIcon: IconButton(
-                      onPressed: () {},
                       icon: Icon(
-                        Icons.visibility_outlined,
-                        color: Colors.blue,
+                        _passwordVisible
+                            ? Icons.visibility
+                            : Icons.visibility_off,
+                        color: Style.blue,
                       ),
+                      onPressed: () {
+                        setState(() {
+                          _passwordVisible = !_passwordVisible;
+                        });
+                      },
                     ),
                     hintText: '********',
                     labelText: 'Kata Sandi',
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: TextButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => SignUpPage(),
+                        ),
+                      );
+                    },
+                    child: Text(
+                      'Lupa Kata Sandi?',
+                      style: Theme.of(context)
+                          .textTheme
+                          .bodyMedium!
+                          .copyWith(color: Style.blue),
+                    ),
                   ),
                 ),
                 const SizedBox(height: 16),
@@ -121,7 +162,14 @@ class _LoginPageState extends State<LoginPage> {
                   width: double.infinity,
                   child: ElevatedButton(
                     onPressed: () => login(),
-                    child: const Text('Masuk'),
+                    child: Wrap(
+                      crossAxisAlignment: WrapCrossAlignment.center,
+                      spacing: 8,
+                      children: [
+                        Icon(Icons.login_outlined),
+                        Text('Masuk'),
+                      ],
+                    ),
                   ),
                 ),
               ],
